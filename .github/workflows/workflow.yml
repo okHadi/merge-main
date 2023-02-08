@@ -19,7 +19,7 @@ jobs:
 
       - name: Wait
         run: |
-          sleep 5
+          sleep 1000
 
       - name: Set mergeability to true
         run: |
