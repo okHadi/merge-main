@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check conditions
-      run: |
-      echo This check blocks the merge.
-      exit 1
+      - name: Check conditions
+        run: |
+          echo This check blocks the merge.
+          exit 1
