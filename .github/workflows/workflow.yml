@@ -14,11 +14,3 @@ jobs:
         run: |
           echo This check blocks the merge.
           exit 1
-      - name: Set Pull Request status
-        if: failure()
-        uses: actions/create-status@v1
-        with:
-          context: Continuous Integration
-          state: failure
-          description: The pull request failed the checks
-          token: ${{ secrets.GITHUB_TOKEN }}
