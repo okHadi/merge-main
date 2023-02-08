@@ -14,3 +14,4 @@ jobs:
         run: |
           echo This check blocks the merge.
           exit 1
+          echo asdf
