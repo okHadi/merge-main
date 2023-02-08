@@ -44,12 +44,24 @@ jobs:
       - name: Wait for workflow to complete
         run: |
           echo "The workflow is running. Please wait until it is complete before attempting to merge or approve pull requests to the main branch."
-          sleep 100
+          sleep 200
 
-      - name: Revert original branch protection settings
+      - name: Revert branch protection settings
         run: |
           curl -X PUT \
-          -H "Authorization: Bearer ${{ secrets.token }}" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github+json" \
-          https://api.github.com/repos/${{ github.repository }}/branches/main/protection/required_pull_request_reviews \
-          -d "$(cat protection.json | jq '.required_pull_request_reviews')"
+          https://api.github.com/repos/${{ github.repository }}/branches/${{ env.BRANCH_NAME }}/protection \
+          -d '{
+            "enforce_admins": false,
+            "required_status_checks": {
+              "strict": false,
+              "contexts": []
+            },
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": false,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": null
+            },
+            "restrictions": null
+          }'
