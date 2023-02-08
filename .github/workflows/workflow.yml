@@ -1,36 +1,15 @@
-name: Protect Pull Request
+name: Set Mergeability of Pull Request
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  protect:
+  set_mergeability:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check
-        run: |
-          # Your checks go here
-          echo "Running checks..."
-
-      - name: Update status
-        uses: octokit/request-action@v2
-        with:
-          octokit_auth: ${{ secrets.GITHUB_TOKEN }}
-          octokit_event_path: ${{ github.event_path }}
-          method: POST
-          url: https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
-          headers:
-            accept: application/vnd.github.antiope-preview+json
-          payload: |
-            {
-              "state": "success",
-              "context": "checks",
-              "description": "All checks have passed"
-            }
-
-      - name: Update mergeability
+      - name: Set mergeability to false
         uses: octokit/request-action@v2
         with:
           octokit_auth: ${{ secrets.GITHUB_TOKEN }}
@@ -38,7 +17,27 @@ jobs:
           method: PATCH
           url: https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
           headers:
-            accept: application/vnd.github.v3+json
+            accept: "application/vnd.github.v3+json"
+          payload: |
+            {
+              "state": "success",
+              "mergeable": false
+            }
+
+      - name: Wait for specified time
+        run: |
+          echo "Waiting for 5 minutes..."
+          sleep 300
+
+      - name: Set mergeability to true
+        uses: octokit/request-action@v2
+        with:
+          octokit_auth: ${{ secrets.GITHUB_TOKEN }}
+          octokit_event_path: ${{ github.event_path }}
+          method: PATCH
+          url: https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
+          headers:
+            accept: "application/vnd.github.v3+json"
           payload: |
             {
               "state": "success",
