@@ -14,3 +14,10 @@ jobs:
         run: |
           echo This check blocks the merge.
           exit 1
+      - name: Set Pull Request status
+        if: failure()
+        uses: peter-evans/set-pull-request-status@v1
+        with:
+          state: failure
+          description: The pull request failed the checks
+          context: Continuous Integration
