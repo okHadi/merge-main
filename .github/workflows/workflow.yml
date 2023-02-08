@@ -3,6 +3,8 @@ name: Update Mergeability
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    branches:
+      - main
 
 jobs:
   update_mergeability:
