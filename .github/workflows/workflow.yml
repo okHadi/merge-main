@@ -13,7 +13,7 @@ jobs:
         run: |
           curl -X PATCH \
                -H "Accept: application/vnd.github.v3+json" \
-               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Authorization: token ${{ secrets.token }}" \
                -d '{"state": "success", "mergeable": false}' \
                https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
 
@@ -25,6 +25,6 @@ jobs:
         run: |
           curl -X PATCH \
                -H "Accept: application/vnd.github.v3+json" \
-               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Authorization: token ${{ secrets.token }}" \
                -d '{"state": "success", "mergeable": true}' \
                https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
