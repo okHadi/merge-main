@@ -1,45 +1,30 @@
-name: Set Mergeability of Pull Request
+name: Update Mergeability
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  set_mergeability:
+  update_mergeability:
     runs-on: ubuntu-latest
 
     steps:
       - name: Set mergeability to false
-        uses: octokit/request-action@v2
-        with:
-          octokit_auth: ${{ secrets.GITHUB_TOKEN }}
-          octokit_event_path: ${{ github.event_path }}
-          method: PATCH
-          url: https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
-          headers:
-            accept: "application/vnd.github.v3+json"
-          payload: |
-            {
-              "state": "success",
-              "mergeable": false
-            }
-
-      - name: Wait for specified time
         run: |
-          echo "Waiting for 5 minutes..."
-          sleep 300
+          curl -X PATCH \
+               -H "Accept: application/vnd.github.v3+json" \
+               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -d '{"state": "success", "mergeable": false}' \
+               https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
+
+      - name: Wait
+        run: |
+          sleep 5
 
       - name: Set mergeability to true
-        uses: octokit/request-action@v2
-        with:
-          octokit_auth: ${{ secrets.GITHUB_TOKEN }}
-          octokit_event_path: ${{ github.event_path }}
-          method: PATCH
-          url: https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
-          headers:
-            accept: "application/vnd.github.v3+json"
-          payload: |
-            {
-              "state": "success",
-              "mergeable": true
-            }
+        run: |
+          curl -X PATCH \
+               -H "Accept: application/vnd.github.v3+json" \
+               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -d '{"state": "success", "mergeable": true}' \
+               https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
