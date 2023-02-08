@@ -9,22 +9,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set mergeability to false
-        run: |
-          curl -X PATCH \
-               -H "Accept: application/vnd.github.v3+json" \
-               -H "Authorization: token ${{ secrets.token }}" \
-               -d '{"state": "success", "mergeable": false}' \
-               https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
-
-      - name: Wait
-        run: |
-          sleep 1000
-
-      - name: Set mergeability to true
-        run: |
-          curl -X PATCH \
-               -H "Accept: application/vnd.github.v3+json" \
-               -H "Authorization: token ${{ secrets.token }}" \
-               -d '{"state": "success", "mergeable": true}' \
-               https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
+      - name: wait
+        run: sleep 100
