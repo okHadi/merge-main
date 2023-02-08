@@ -16,21 +16,9 @@ jobs:
           exit 1
       - name: Set Pull Request status
         if: failure()
-        uses: actions/github-script@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/create-status@v1
         with:
-          script: |
-            const octokit = require("@octokit/rest")();
-            octokit.authenticate({
-              type: "token",
-              token: process.env.GITHUB_TOKEN
-            });
-            await octokit.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: context.sha,
-              state: "failure",
-              description: "The pull request failed the checks",
-              context: "Continuous Integration"
-            });
+          context: Continuous Integration
+          state: failure
+          description: The pull request failed the checks
+          token: ${{ secrets.GITHUB_TOKEN }}
