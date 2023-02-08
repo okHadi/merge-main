@@ -44,7 +44,7 @@ jobs:
       - name: Wait for workflow to complete
         run: |
           echo "The workflow is running. Please wait until it is complete before attempting to merge or approve pull requests to the main branch."
-          sleep 5
+          sleep 200
 
       - name: Revert branch protection settings
         run: |
