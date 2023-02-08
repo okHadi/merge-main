@@ -1,16 +1,37 @@
-name: Block Merge on Main Branch
+name: Protect Main Branch
 
 on:
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize]
 
 jobs:
-  check:
+  protect_main_branch:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check conditions
-        run: |
-          echo This check does not block the merge.
-          exit 0
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Protect Main Branch
+        uses: actions/github-script@v2
+        with:
+          script: |
+            const octokit = require('@octokit/rest')({ auth: process.env.GITHUB_TOKEN });
+            const { data } = await octokit.repos.getBranchProtection({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'main'
+            });
+
+            if (data.required_status_checks === null) {
+              await octokit.repos.updateBranchProtection({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                branch: 'main',
+                required_status_checks: { strict: true, contexts: [] },
+                enforce_admins: true,
+                restrictions: null
+              });
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
